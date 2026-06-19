@@ -43,6 +43,7 @@ export interface Session {
   id: string;
   code: string;
   team_name: string;
+  facilitator_name: string | null;
   current_step: number;
   core_value_ids: string[];
   final_rules: FinalRule[];

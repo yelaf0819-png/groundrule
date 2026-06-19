@@ -295,7 +295,11 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-2 mb-3">
                         <Crown className="w-3.5 h-3.5 text-yellow-500" />
                         <span className="text-xs text-stone-500">팀장</span>
-                        <span className="text-xs text-stone-400 italic">이름 미입력 (팀장 화면에서 진행)</span>
+                        {session.facilitator_name ? (
+                          <span className="text-xs font-semibold text-stone-800">{session.facilitator_name}</span>
+                        ) : (
+                          <span className="text-xs text-stone-400 italic">미입력</span>
+                        )}
                       </div>
 
                       {/* 구성원 */}

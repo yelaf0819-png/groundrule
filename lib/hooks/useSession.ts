@@ -13,7 +13,8 @@ function generateCode(): string {
 // 팀장: 새 세션 생성
 // ============================================================
 export async function createSession(
-  teamName: string
+  teamName: string,
+  facilitatorName?: string
 ): Promise<{ sessionId: string; code: string } | { error: string }> {
   const supabase = createClient();
 
@@ -21,7 +22,7 @@ export async function createSession(
     const code = generateCode();
     const { data, error } = await supabase
       .from("sessions")
-      .insert({ code, team_name: teamName })
+      .insert({ code, team_name: teamName, facilitator_name: facilitatorName ?? null })
       .select("id, code")
       .single();
 
