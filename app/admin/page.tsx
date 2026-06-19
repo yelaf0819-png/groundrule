@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { Lock } from "lucide-react";
-
-// M2 이후 어드민 대시보드 구현 예정
-// import AdminDashboard from "@/components/admin/AdminDashboard";
+import AdminDashboard from "@/components/admin/AdminDashboard";
 
 const ADMIN_PASSWORD =
   typeof window !== "undefined"
@@ -69,18 +67,9 @@ export default function AdminPage() {
     );
   }
 
-  // M2에서 AdminDashboard 컴포넌트로 교체
   return (
-    <main className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
-      <div className="text-center">
-        <p className="text-xs font-semibold tracking-widest text-emerald-700 uppercase mb-4">
-          운영자 대시보드
-        </p>
-        <h1 className="text-xl font-bold text-stone-900">전체 팀 진행 현황</h1>
-        <p className="text-stone-400 text-sm mt-4">
-          M2 구현 후 5개 팀 실시간 현황이 표시됩니다
-        </p>
-      </div>
+    <main className="min-h-screen bg-stone-50">
+      <AdminDashboard />
     </main>
   );
 }
