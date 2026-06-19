@@ -18,8 +18,14 @@ export default function PartStep2({
   const groupMembers = participants.filter((p) => p.group_number === me?.group_number);
 
   const coreValues = session.core_value_ids
-    .map((id) => PRESET_VALUES.find((v) => v.id === id))
-    .filter(Boolean) as (typeof PRESET_VALUES)[number][];
+    .map((id) => {
+      if (id.startsWith("custom:")) {
+        return { id, label: id.slice(7), desc: "", isCustom: true };
+      }
+      const preset = PRESET_VALUES.find((v) => v.id === id);
+      return preset ? { ...preset, isCustom: false } : null;
+    })
+    .filter(Boolean) as { id: string; label: string; desc: string; isCustom: boolean }[];
 
   const [rules, setRules] = useState([
     { text: "", valueId: "" },
@@ -106,25 +112,32 @@ export default function PartStep2({
         {coreValues.length > 0 && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4">
             <p className="text-xs font-semibold text-emerald-800 mb-2">우리 팀 핵심 가치 예시 (클릭하면 자동 입력)</p>
-            {coreValues.map((v) => (
-              <div key={v.id} className="mb-2">
-                <p className="text-xs font-medium text-emerald-700 mb-1">{v.label}</p>
-                <div className="flex flex-col gap-1">
-                  {VALUE_RULE_EXAMPLES[v.id]?.map((ex, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        const emptyIdx = rules.findIndex((r) => !r.text);
-                        if (emptyIdx >= 0) applyExample(emptyIdx, ex, v.id);
-                      }}
-                      className="text-left text-xs text-stone-700 bg-white border border-emerald-200 rounded-lg px-3 py-1.5 hover:bg-emerald-50 transition-colors"
-                    >
-                      {ex}
-                    </button>
-                  ))}
+            {coreValues.map((v) => {
+              const examples = v.isCustom ? [] : (VALUE_RULE_EXAMPLES[v.id] ?? []);
+              return (
+                <div key={v.id} className="mb-2">
+                  <p className="text-xs font-medium text-emerald-700 mb-1">{v.label}</p>
+                  {examples.length > 0 ? (
+                    <div className="flex flex-col gap-1">
+                      {examples.map((ex, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            const emptyIdx = rules.findIndex((r) => !r.text);
+                            if (emptyIdx >= 0) applyExample(emptyIdx, ex, v.id);
+                          }}
+                          className="text-left text-xs text-stone-700 bg-white border border-emerald-200 rounded-lg px-3 py-1.5 hover:bg-emerald-50 transition-colors"
+                        >
+                          {ex}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-emerald-600 italic">팀이 직접 정한 가치예요. 어떤 룰로 표현할지 이야기해보세요!</p>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

@@ -49,6 +49,7 @@ export default function AdminDashboard() {
     return ruleCandidates.filter((c) => c.session_id === sessionId);
   }
   function getValueLabel(id: string) {
+    if (id.startsWith("custom:")) return id.slice(7);
     return PRESET_VALUES.find((v) => v.id === id)?.label ?? id;
   }
 

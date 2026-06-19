@@ -7,6 +7,11 @@ import { PRESET_VALUES } from "@/lib/constants";
 import { updateStep } from "@/lib/hooks/useSession";
 import type { Session } from "@/lib/constants";
 
+function getLabel(id: string) {
+  if (id.startsWith("custom:")) return id.slice(7);
+  return PRESET_VALUES.find((v) => v.id === id)?.label ?? id;
+}
+
 export default function FacStep1({ session }: { session: Session }) {
   const { counts, respondents } = useValueVoteCounts(session.id);
   const suggestions = useValueSuggestions(session.id);
@@ -58,11 +63,12 @@ export default function FacStep1({ session }: { session: Session }) {
         <div className="bg-emerald-50 rounded-lg px-3 py-2 my-3 text-xs text-emerald-800">
           선택됨:{" "}
           {selected.length > 0
-            ? selected.map((id) => PRESET_VALUES.find((v) => v.id === id)?.label).join(", ")
+            ? selected.map((id) => getLabel(id)).join(", ")
             : "없음"}{" "}
           ({selected.length}/3)
         </div>
 
+        {/* 프리셋 가치 목록 */}
         <div className="space-y-1">
           {sorted.map(({ id, label, count }) => {
             const isSelected = selected.includes(id);
@@ -112,16 +118,38 @@ export default function FacStep1({ session }: { session: Session }) {
         )}
       </div>
 
-      {/* 주관식 제안 */}
+      {/* 추가 제안 가치 — 선택 가능 */}
       {suggestions.length > 0 && (
         <div className="bg-white border border-stone-200 rounded-2xl p-5">
-          <h4 className="text-sm font-semibold text-stone-700 mb-3">추가 제안 가치</h4>
-          <div className="space-y-1.5">
-            {suggestions.map((s) => (
-              <p key={s.id} className="text-sm text-stone-700 bg-stone-50 rounded-lg px-3 py-2">
-                "{s.text}"
-              </p>
-            ))}
+          <h4 className="text-sm font-semibold text-stone-700 mb-1">추가 제안 가치</h4>
+          <p className="text-xs text-stone-400 mb-3">참여자가 직접 제안한 가치예요. 선택해서 핵심 가치로 포함할 수 있어요.</p>
+          <div className="space-y-2">
+            {suggestions.map((s) => {
+              const customId = `custom:${s.text}`;
+              const isSelected = selected.includes(customId);
+              const isDisabled = confirmed || (!isSelected && selected.length >= 3);
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => toggle(customId)}
+                  disabled={isDisabled}
+                  className={`w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl border-2 transition-all ${
+                    isSelected
+                      ? "border-emerald-500 bg-emerald-50"
+                      : isDisabled
+                      ? "border-stone-100 bg-stone-50 opacity-40"
+                      : "border-stone-200 bg-white hover:border-emerald-300"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-md flex-shrink-0 flex items-center justify-center border-2 ${
+                    isSelected ? "bg-emerald-600 border-emerald-600" : "border-stone-300"
+                  }`}>
+                    {isSelected && <CheckCircle2 size={13} className="text-white" />}
+                  </div>
+                  <span className="text-sm font-medium text-stone-800">"{s.text}"</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
