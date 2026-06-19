@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Session, Participant } from "@/lib/constants";
+import type { Session, Participant, RuleCandidate } from "@/lib/constants";
 
 export function useAllSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -86,4 +86,29 @@ export async function adminRenameSession(sessionId: string, teamName: string): P
     .update({ team_name: teamName })
     .eq("id", sessionId);
   return error ? { error: error.message } : {};
+}
+
+export function useAllRuleCandidates() {
+  const [candidates, setCandidates] = useState<RuleCandidate[]>([]);
+
+  const fetch = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("rule_candidates")
+      .select("*")
+      .order("group_number");
+    if (data) setCandidates(data as RuleCandidate[]);
+  }, []);
+
+  useEffect(() => {
+    fetch();
+    const supabase = createClient();
+    const channel = supabase
+      .channel("admin-rule-candidates-all")
+      .on("postgres_changes", { event: "*", schema: "public", table: "rule_candidates" }, fetch)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetch]);
+
+  return candidates;
 }
