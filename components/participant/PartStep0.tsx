@@ -15,7 +15,7 @@ export default function PartStep0({ session }: { session: Session }) {
           </div>
         </div>
         <h2 className="text-xl font-bold text-stone-900 mb-2">곧 시작합니다</h2>
-        <p className="text-stone-500 text-sm">팀장이 워크숍을 시작하면 자동으로 넘어갑니다</p>
+        <p className="text-stone-500 text-sm">숲장이 워크숍을 시작하면 자동으로 넘어갑니다</p>
       </div>
     </main>
   );

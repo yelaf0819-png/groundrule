@@ -24,7 +24,7 @@ export default function FacStep4({ session }: { session: Session }) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="font-semibold text-stone-900">실시간 투표 집계</h3>
-            <p className="text-xs text-stone-500 mt-0.5">팀장만 볼 수 있습니다</p>
+            <p className="text-xs text-stone-500 mt-0.5">숲장만 볼 수 있습니다</p>
           </div>
           <span className="text-xs text-stone-500">{respondents}/{participants.length} 응답</span>
         </div>

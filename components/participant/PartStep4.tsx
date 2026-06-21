@@ -37,7 +37,7 @@ export default function PartStep4({ session, participantId }: { session: Session
       <main className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4">
         <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
         <h2 className="text-lg font-bold text-stone-900 mb-2">투표 완료!</h2>
-        <p className="text-stone-500 text-sm">팀장이 결과를 집계하는 중입니다</p>
+        <p className="text-stone-500 text-sm">숲장이 결과를 집계하는 중입니다</p>
       </main>
     );
   }

@@ -37,7 +37,7 @@ export default function PartStep1({ session, participantId }: { session: Session
         <div className="text-center">
           <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
           <h2 className="text-lg font-bold text-stone-900 mb-2">투표 완료!</h2>
-          <p className="text-stone-500 text-sm">팀장이 핵심 가치를 확정하는 중입니다</p>
+          <p className="text-stone-500 text-sm">숲장이 핵심 가치를 확정하는 중입니다</p>
         </div>
       </main>
     );
@@ -48,7 +48,7 @@ export default function PartStep1({ session, participantId }: { session: Session
       <div className="max-w-sm mx-auto">
         <div className="text-center mb-6">
           <p className="text-xs font-semibold tracking-widest text-emerald-700 uppercase mb-1">1단계</p>
-          <h2 className="text-xl font-bold text-stone-900">우리 팀의 가치</h2>
+          <h2 className="text-xl font-bold text-stone-900">우리 숲의 가치</h2>
           <p className="text-stone-500 text-sm mt-1">
             가장 중요하게 여기고 싶은 가치 {MAX_VALUE_VOTES}개를 선택해주세요
           </p>

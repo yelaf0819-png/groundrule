@@ -111,7 +111,7 @@ export default function PartStep2({
         {/* 핵심 가치 예시 */}
         {coreValues.length > 0 && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4">
-            <p className="text-xs font-semibold text-emerald-800 mb-2">우리 팀 핵심 가치 예시 (클릭하면 자동 입력)</p>
+            <p className="text-xs font-semibold text-emerald-800 mb-2">우리 숲 핵심 가치 예시 (클릭하면 자동 입력)</p>
             {coreValues.map((v) => {
               const examples = v.isCustom ? [] : (VALUE_RULE_EXAMPLES[v.id] ?? []);
               return (
@@ -133,7 +133,7 @@ export default function PartStep2({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-emerald-600 italic">팀이 직접 정한 가치예요. 어떤 룰로 표현할지 이야기해보세요!</p>
+                    <p className="text-xs text-emerald-600 italic">숲이 직접 정한 가치예요. 어떤 룰로 표현할지 이야기해보세요!</p>
                   )}
                 </div>
               );

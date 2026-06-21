@@ -27,7 +27,7 @@ export default function PartStep5({ session }: { session: Session }) {
       <main className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
         <div className="text-center text-stone-400">
           <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-          팀장이 최종 확정하는 중입니다…
+          숲장이 최종 확정하는 중입니다…
         </div>
       </main>
     );
@@ -45,7 +45,7 @@ export default function PartStep5({ session }: { session: Session }) {
             <Crown className="w-5 h-5 text-yellow-300" />
             <div>
               <p className="text-xs text-emerald-300 font-medium">MK Summer Camp 2026</p>
-              <p className="font-bold">{session.team_name} 그라운드룰</p>
+              <p className="font-bold">{session.team_name} 숲 그라운드룰</p>
             </div>
           </div>
 

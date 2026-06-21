@@ -42,7 +42,7 @@ export default function JoinPage() {
           </p>
           <h1 className="text-xl font-bold text-stone-900">참여자 입장</h1>
           <p className="text-stone-500 text-sm mt-1">
-            팀장에게 받은 코드와 내 이름을 입력하세요
+            숲장에게 받은 코드와 내 이름을 입력하세요
           </p>
         </div>
 

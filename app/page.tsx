@@ -17,10 +17,10 @@ export default function LandingPage() {
       {/* 타이틀 */}
       <div className="text-center mb-10">
         <h1 className="text-2xl font-bold text-stone-900 mb-2">
-          팀 그라운드룰 워크숍
+          숲 그라운드룰 워크숍
         </h1>
         <p className="text-stone-500 text-sm">
-          우리 팀만의 약속을 함께 만들어요
+          우리 숲만의 약속을 함께 만들어요
         </p>
       </div>
 
@@ -34,7 +34,7 @@ export default function LandingPage() {
             <Shield className="w-6 h-6" />
           </div>
           <div className="text-left">
-            <p className="font-semibold text-base">팀장으로 시작</p>
+            <p className="font-semibold text-base">숲장으로 시작</p>
             <p className="text-emerald-200 text-xs mt-0.5">
               새 세션 만들기 · 워크숍 진행
             </p>
@@ -51,7 +51,7 @@ export default function LandingPage() {
           <div className="text-left">
             <p className="font-semibold text-base">참여자로 입장</p>
             <p className="text-stone-400 text-xs mt-0.5">
-              팀장에게 받은 코드로 입장
+              숲장에게 받은 코드로 입장
             </p>
           </div>
         </Link>

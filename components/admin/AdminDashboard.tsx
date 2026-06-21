@@ -115,7 +115,7 @@ export default function AdminDashboard() {
       {/* 통계 카드 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {[
-          { label: "전체 팀", value: sessions.length, color: "text-stone-900" },
+          { label: "전체 숲", value: sessions.length, color: "text-stone-900" },
           { label: "총 참여자", value: totalParticipants, color: "text-stone-900" },
           { label: "진행 중", value: activeSessions, color: "text-blue-600" },
           { label: "완료", value: completedSessions, color: "text-emerald-600" },
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
               value={newTeamName}
               onChange={(e) => setNewTeamName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-              placeholder="팀 이름 입력 (예: 사랑팀)"
+              placeholder="숲 이름 입력 (예: 사랑숲)"
               className="flex-1 px-4 py-2.5 rounded-xl border border-stone-200 bg-white text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               autoFocus
             />
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
             className="flex items-center gap-2 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5 hover:bg-emerald-100 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            새 팀 추가
+            새 숲 추가
           </button>
         )}
       </div>
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
       {/* 팀 카드 목록 */}
       {sessions.length === 0 ? (
         <div className="text-center py-20 text-stone-400 text-sm bg-white border border-stone-200 rounded-2xl">
-          아직 생성된 팀이 없습니다
+          아직 생성된 숲이 없습니다
         </div>
       ) : (
         <div className="space-y-3">
@@ -295,7 +295,7 @@ export default function AdminDashboard() {
                       {/* 팀장 */}
                       <div className="flex items-center gap-2 mb-3">
                         <Crown className="w-3.5 h-3.5 text-yellow-500" />
-                        <span className="text-xs text-stone-500">팀장</span>
+                        <span className="text-xs text-stone-500">숲장</span>
                         {session.facilitator_name ? (
                           <span className="text-xs font-semibold text-stone-800">{session.facilitator_name}</span>
                         ) : (
@@ -447,7 +447,7 @@ export default function AdminDashboard() {
                           className="flex items-center gap-1.5 text-xs px-3 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 font-semibold"
                         >
                           <ExternalLink className="w-3 h-3" />
-                          팀장 화면
+                          숲장 화면
                         </a>
                         <a
                           href="/join"

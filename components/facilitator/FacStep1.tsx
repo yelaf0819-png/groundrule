@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { CheckCircle2, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { useValueVoteCounts, useValueSuggestions, confirmCoreValues } from "@/lib/hooks/useValueVotes";
 import { useParticipants } from "@/lib/hooks/useSession";
 import { PRESET_VALUES } from "@/lib/constants";
@@ -46,13 +46,12 @@ export default function FacStep1({ session }: { session: Session }) {
 
   return (
     <div className="space-y-4">
-      {/* 투표 결과 */}
       <div className="bg-white border border-stone-200 rounded-2xl p-6">
         <div className="flex items-start justify-between mb-2 gap-4">
           <div>
             <h3 className="font-semibold text-stone-900">가치 투표 결과</h3>
             <p className="text-xs text-stone-500 mt-0.5">
-              결과를 보고 우리 팀의 핵심 가치 3개를 직접 선택해 확정해주세요
+              결과를 보고 우리 숲의 핵심 가치 3개를 직접 선택해 확정해주세요
             </p>
           </div>
           <span className="text-xs text-stone-500 flex-shrink-0 mt-1">
@@ -62,13 +61,11 @@ export default function FacStep1({ session }: { session: Session }) {
 
         <div className="bg-emerald-50 rounded-lg px-3 py-2 my-3 text-xs text-emerald-800">
           선택됨:{" "}
-          {selected.length > 0
-            ? selected.map((id) => getLabel(id)).join(", ")
-            : "없음"}{" "}
+          {selected.length > 0 ? selected.map((id) => getLabel(id)).join(", ") : "없음"}{" "}
           ({selected.length}/3)
         </div>
 
-        {/* 프리셋 가치 목록 */}
+        {/* 프리셋 가치 */}
         <div className="space-y-1">
           {sorted.map(({ id, label, count }) => {
             const isSelected = selected.includes(id);
@@ -101,6 +98,41 @@ export default function FacStep1({ session }: { session: Session }) {
           })}
         </div>
 
+        {/* 추가 제안 가치 — 프리셋 바로 아래, 확정 버튼 위 */}
+        {suggestions.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-stone-100">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Sparkles size={12} className="text-amber-500" />
+              <p className="text-xs font-semibold text-stone-500">구성원 추가 제안</p>
+            </div>
+            <div className="space-y-1.5">
+              {suggestions.map((s) => {
+                const customId = `custom:${s.text}`;
+                const isSelected = selected.includes(customId);
+                const isDisabled = !isSelected && selected.length >= 3;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => toggle(customId)}
+                    disabled={confirmed || isDisabled}
+                    className={`w-full flex items-center gap-3 p-2 rounded-lg transition text-left ${
+                      isSelected ? "bg-amber-50" : "hover:bg-stone-50"
+                    } ${confirmed || isDisabled ? "cursor-default opacity-60" : ""}`}
+                  >
+                    <div className={`w-5 h-5 rounded-md flex-shrink-0 flex items-center justify-center border-2 ${
+                      isSelected ? "bg-amber-500 border-amber-500" : "border-stone-300"
+                    }`}>
+                      {isSelected && <CheckCircle2 size={13} className="text-white" />}
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-stone-700">"{s.text}"</span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">제안</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {!confirmed ? (
           <button
             onClick={handleConfirm}
@@ -108,7 +140,7 @@ export default function FacStep1({ session }: { session: Session }) {
             className="mt-4 w-full bg-emerald-700 text-white rounded-xl py-3 font-semibold hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> : null}
-            우리 팀의 핵심 가치로 확정
+            우리 숲의 핵심 가치로 확정
           </button>
         ) : (
           <div className="mt-4 flex items-center gap-2 text-emerald-700 text-sm font-medium">
@@ -118,43 +150,6 @@ export default function FacStep1({ session }: { session: Session }) {
         )}
       </div>
 
-      {/* 추가 제안 가치 — 선택 가능 */}
-      {suggestions.length > 0 && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5">
-          <h4 className="text-sm font-semibold text-stone-700 mb-1">추가 제안 가치</h4>
-          <p className="text-xs text-stone-400 mb-3">참여자가 직접 제안한 가치예요. 선택해서 핵심 가치로 포함할 수 있어요.</p>
-          <div className="space-y-2">
-            {suggestions.map((s) => {
-              const customId = `custom:${s.text}`;
-              const isSelected = selected.includes(customId);
-              const isDisabled = confirmed || (!isSelected && selected.length >= 3);
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => toggle(customId)}
-                  disabled={isDisabled}
-                  className={`w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl border-2 transition-all ${
-                    isSelected
-                      ? "border-emerald-500 bg-emerald-50"
-                      : isDisabled
-                      ? "border-stone-100 bg-stone-50 opacity-40"
-                      : "border-stone-200 bg-white hover:border-emerald-300"
-                  }`}
-                >
-                  <div className={`w-5 h-5 rounded-md flex-shrink-0 flex items-center justify-center border-2 ${
-                    isSelected ? "bg-emerald-600 border-emerald-600" : "border-stone-300"
-                  }`}>
-                    {isSelected && <CheckCircle2 size={13} className="text-white" />}
-                  </div>
-                  <span className="text-sm font-medium text-stone-800">"{s.text}"</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* 다음 단계 */}
       {confirmed && (
         <button
           onClick={handleNext}

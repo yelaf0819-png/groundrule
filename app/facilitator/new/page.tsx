@@ -39,14 +39,14 @@ export default function NewSessionPage() {
           </p>
           <h1 className="text-xl font-bold text-stone-900">새 세션 만들기</h1>
           <p className="text-stone-500 text-sm mt-1">
-            정보를 입력하면 입장 코드가 생성됩니다
+            숲장 이름과 숲 이름을 입력하면 입장 코드가 생성됩니다
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="facilitatorName" className="block text-sm font-medium text-stone-700 mb-1.5">
-              팀장 이름
+              숲장 이름
             </label>
             <input
               id="facilitatorName"
@@ -62,14 +62,14 @@ export default function NewSessionPage() {
 
           <div>
             <label htmlFor="teamName" className="block text-sm font-medium text-stone-700 mb-1.5">
-              팀 이름
+              숲 이름
             </label>
             <input
               id="teamName"
               type="text"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
-              placeholder="예: 참가자관리팀"
+              placeholder="예: 참가자관리숲"
               className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-base"
               disabled={loading}
             />
