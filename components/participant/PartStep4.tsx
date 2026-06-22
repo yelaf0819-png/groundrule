@@ -42,7 +42,14 @@ export default function PartStep4({ session, participantId }: { session: Session
     );
   }
 
-  const groupNumbers = [...new Set(candidates.map((c) => c.group_number))].sort();
+  const seen = new Set<string>();
+  const uniqueCandidates = candidates.filter((c) => {
+    const key = c.text.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const groupNumbers = [...new Set(uniqueCandidates.map((c) => c.group_number))].sort();
 
   return (
     <main className="min-h-screen bg-stone-50 px-4 py-8">
@@ -61,7 +68,7 @@ export default function PartStep4({ session, participantId }: { session: Session
 
         <div className="space-y-4 mb-6">
           {groupNumbers.map((g) => {
-            const groupRules = candidates.filter((c) => c.group_number === g);
+            const groupRules = uniqueCandidates.filter((c) => c.group_number === g);
             return (
               <div key={g}>
                 <p className="text-xs font-semibold text-stone-500 mb-2">{g}조</p>

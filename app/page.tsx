@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Users, Shield } from "lucide-react";
+import FacilitatorReJoin from "@/components/FacilitatorReJoin";
 
 export default function LandingPage() {
   return (
@@ -10,7 +11,7 @@ export default function LandingPage() {
           MK Summer Camp 2026
         </p>
         <p className="text-xs text-stone-500 tracking-wide">
-          PEACE · JOY · RIGHTEOUSNESS · ROMANS 14:17
+          RIGHTEOUSNESS · PEACE · JOY · ROMANS 14:17
         </p>
       </div>
 
@@ -56,6 +57,8 @@ export default function LandingPage() {
           </div>
         </Link>
       </div>
+
+      <FacilitatorReJoin />
 
       {/* 어드민 링크 */}
       <div className="mt-12">

@@ -27,6 +27,13 @@ export default function NewSessionPage() {
       return;
     }
 
+    try {
+      localStorage.setItem("fac_session", JSON.stringify({
+        sessionId: result.sessionId,
+        teamName: teamName.trim(),
+        code: result.code,
+      }));
+    } catch {}
     router.push(`/facilitator/${result.sessionId}`);
   }
 

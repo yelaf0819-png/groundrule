@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import { useRouter } from "next/navigation";
 import { useSessionState } from "@/lib/hooks/useSession";
 import FacilitatorGuide from "@/components/facilitator/FacilitatorGuide";
 import FacStep0 from "@/components/facilitator/FacStep0";
@@ -9,7 +10,7 @@ import FacStep2 from "@/components/facilitator/FacStep2";
 import FacStep3 from "@/components/facilitator/FacStep3";
 import FacStep4 from "@/components/facilitator/FacStep4";
 import FacStep5 from "@/components/facilitator/FacStep5";
-import { Loader2 } from "lucide-react";
+import { Loader2, Home } from "lucide-react";
 
 const STEP_TITLES = [
   "입장 대기",
@@ -27,7 +28,14 @@ interface Props {
 
 export default function FacilitatorPage({ params }: Props) {
   const { sessionId } = use(params);
+  const router = useRouter();
   const { session, loading, error } = useSessionState(sessionId);
+
+  function handleHome() {
+    if (confirm("홈으로 나가시겠습니까? 세션은 유지됩니다.")) {
+      router.push("/");
+    }
+  }
 
   if (loading) {
     return (
@@ -51,11 +59,20 @@ export default function FacilitatorPage({ params }: Props) {
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <p className="text-xs text-stone-500 mb-0.5">
-            {session.team_name} · 코드 {session.code}
-          </p>
-          <h1 className="text-xl font-bold text-stone-900">{STEP_TITLES[step]}</h1>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleHome}
+            className="text-stone-400 hover:text-stone-600 transition-colors p-1"
+            title="홈으로"
+          >
+            <Home className="w-5 h-5" />
+          </button>
+          <div>
+            <p className="text-xs text-stone-500 mb-0.5">
+              {session.team_name} · 코드 {session.code}
+            </p>
+            <h1 className="text-xl font-bold text-stone-900">{STEP_TITLES[step]}</h1>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-sm text-stone-500 bg-white border border-stone-200 rounded-lg px-3 py-1.5">
           {STEP_TIMES[step]}

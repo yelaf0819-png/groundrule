@@ -58,7 +58,19 @@ export async function joinSession(
     return { error: "코드를 확인해 주세요. 일치하는 세션이 없습니다." };
   }
 
-  // 참여자 등록
+  // 같은 이름 참여자가 이미 있으면 재입장 처리
+  const { data: existing } = await supabase
+    .from("participants")
+    .select("id")
+    .eq("session_id", session.id)
+    .eq("name", name.trim())
+    .maybeSingle();
+
+  if (existing) {
+    return { sessionId: session.id, participantId: existing.id };
+  }
+
+  // 새 참여자 등록
   const { data: participant, error: participantError } = await supabase
     .from("participants")
     .insert({ session_id: session.id, name: name.trim() })

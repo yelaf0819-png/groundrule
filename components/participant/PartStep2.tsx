@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { CheckCircle2, Loader2, ChevronDown, ChevronUp } from "lucide-react";
-import { submitGroupRules } from "@/lib/hooks/useGroups";
+import { submitGroupRules, useRuleCandidates } from "@/lib/hooks/useGroups";
 import { useParticipants } from "@/lib/hooks/useSession";
 import { PRESET_VALUES, VALUE_RULE_EXAMPLES } from "@/lib/constants";
-import type { Session, Participant } from "@/lib/constants";
+import type { Session } from "@/lib/constants";
 
 export default function PartStep2({
   session,
@@ -14,8 +14,10 @@ export default function PartStep2({
   participantId: string;
 }) {
   const participants = useParticipants(session.id);
+  const candidates = useRuleCandidates(session.id);
   const me = participants.find((p) => p.id === participantId);
   const groupMembers = participants.filter((p) => p.group_number === me?.group_number);
+  const groupAlreadySubmitted = !!me?.group_number && candidates.some((c) => c.group_number === me.group_number);
 
   const coreValues = session.core_value_ids
     .map((id) => {
@@ -76,11 +78,13 @@ export default function PartStep2({
     );
   }
 
-  if (submitted) {
+  if (submitted || groupAlreadySubmitted) {
     return (
       <main className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4">
         <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
-        <h2 className="text-lg font-bold text-stone-900 mb-2">제출 완료!</h2>
+        <h2 className="text-lg font-bold text-stone-900 mb-2">
+          {submitted ? "제출 완료!" : "조에서 이미 제출했어요!"}
+        </h2>
         <p className="text-stone-500 text-sm">다른 조가 완료되기를 기다리는 중입니다</p>
       </main>
     );

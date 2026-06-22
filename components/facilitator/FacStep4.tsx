@@ -10,7 +10,14 @@ export default function FacStep4({ session }: { session: Session }) {
   const participants = useParticipants(session.id);
   const [loading, setLoading] = useState(false);
 
-  const max = counts[0]?.count || 1;
+  const seen = new Set<string>();
+  const dedupedCounts = counts.filter((c) => {
+    const key = c.text.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const max = dedupedCounts[0]?.count || 1;
 
   async function handleNext() {
     setLoading(true);
@@ -29,14 +36,14 @@ export default function FacStep4({ session }: { session: Session }) {
           <span className="text-xs text-stone-500">{respondents}/{participants.length} 응답</span>
         </div>
 
-        {counts.length === 0 ? (
+        {dedupedCounts.length === 0 ? (
           <div className="flex items-center gap-2 text-stone-400 text-sm py-4">
             <Loader2 className="w-4 h-4 animate-spin" />
             투표 대기 중…
           </div>
         ) : (
           <div className="space-y-2">
-            {counts.map((c, i) => (
+            {dedupedCounts.map((c, i) => (
               <div
                 key={c.id}
                 className={`flex items-center gap-3 p-2 rounded-lg ${i < 4 ? "bg-emerald-50" : ""}`}
