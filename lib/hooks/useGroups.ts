@@ -14,14 +14,13 @@ export async function assignGroups(sessionId: string, participants: Participant[
     name: p.name,
     group_number: (i % groupCount) + 1,
   }));
-  for (const u of updates) {
-    const { error } = await supabase
-      .from("participants")
-      .update({ group_number: u.group_number })
-      .eq("id", u.id);
-    if (error) return { error: error.message };
-  }
-  return {};
+  const results = await Promise.all(
+    updates.map((u) =>
+      supabase.from("participants").update({ group_number: u.group_number }).eq("id", u.id)
+    )
+  );
+  const failed = results.find((r) => r.error);
+  return failed ? { error: failed.error!.message } : {};
 }
 
 export function useRuleCandidates(sessionId: string | null) {
