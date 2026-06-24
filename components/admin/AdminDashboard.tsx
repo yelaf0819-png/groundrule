@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   Users, ChevronDown, ChevronUp, Trash2, RefreshCw,
   Plus, X, Loader2, ExternalLink, Pencil, Check,
-  Crown, Target, FileText, Trophy,
+  Crown, Target, FileText, Trophy, LayoutGrid,
 } from "lucide-react";
 import {
   useAllSessions, useAllParticipants, useAllRuleCandidates,
@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   const participants = useAllParticipants();
   const ruleCandidates = useAllRuleCandidates();
 
+  const [activeTab, setActiveTab] = useState<"list" | "results">("list");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -111,6 +112,84 @@ export default function AdminDashboard() {
           새로고침
         </button>
       </div>
+
+      {/* 탭 */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab("list")}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+            activeTab === "list"
+              ? "bg-emerald-700 text-white"
+              : "bg-white border border-stone-200 text-stone-600 hover:border-emerald-400"
+          }`}
+        >
+          <Users className="w-3.5 h-3.5" />
+          숲 목록
+        </button>
+        <button
+          onClick={() => setActiveTab("results")}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+            activeTab === "results"
+              ? "bg-emerald-700 text-white"
+              : "bg-white border border-stone-200 text-stone-600 hover:border-emerald-400"
+          }`}
+        >
+          <LayoutGrid className="w-3.5 h-3.5" />
+          전체 그라운드룰
+          {completedSessions > 0 && (
+            <span className="bg-emerald-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+              {completedSessions}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* 전체 그라운드룰 탭 */}
+      {activeTab === "results" && (
+        <div>
+          {sessions.filter((s) => s.final_rules?.length > 0).length === 0 ? (
+            <div className="text-center py-20 text-stone-400 text-sm bg-white border border-stone-200 rounded-2xl">
+              아직 그라운드룰을 확정한 숲이 없습니다
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {sessions
+                .filter((s) => s.final_rules?.length > 0)
+                .map((session) => (
+                  <div key={session.id} className="bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-2xl p-5 text-white">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Trophy className="w-4 h-4 text-yellow-300" />
+                      <p className="font-bold text-base">{session.team_name} 숲</p>
+                    </div>
+                    {session.core_value_ids?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {session.core_value_ids.map((id) => (
+                          <span key={id} className="text-xs bg-white/20 rounded-full px-2 py-0.5 text-emerald-100">
+                            {getValueLabel(id)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      {session.final_rules.map((rule, i) => (
+                        <div key={rule.id} className="flex items-center gap-3 bg-white/10 rounded-xl px-3 py-2.5">
+                          <span className="text-xs font-bold text-yellow-300 w-4 flex-shrink-0">{i + 1}</span>
+                          <p className="text-sm leading-relaxed">{rule.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-emerald-300 text-center mt-3">
+                      RIGHTEOUSNESS · PEACE · JOY · ROMANS 14:17
+                    </p>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 숲 목록 탭 */}
+      {activeTab === "list" && <>
 
       {/* 통계 카드 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -467,6 +546,8 @@ export default function AdminDashboard() {
           })}
         </div>
       )}
+
+      </> }
     </div>
   );
 }

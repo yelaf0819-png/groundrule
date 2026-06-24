@@ -1,13 +1,22 @@
 "use client";
 import { useRef } from "react";
 import { Crown, Download, Loader2 } from "lucide-react";
+import { PRESET_VALUES } from "@/lib/constants";
 import type { Session } from "@/lib/constants";
 
-export default function PartStep5({ session }: { session: Session }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const wallpaperRef = useRef<HTMLDivElement>(null);
+function getValueSubtitle(ids: string[]): string {
+  if (!ids || ids.length === 0) return "그라운드룰";
+  const labels = ids.map((id) => {
+    if (id.startsWith("custom:")) return id.slice(7);
+    return PRESET_VALUES.find((v) => v.id === id)?.label ?? id;
+  });
+  return labels.join(" · ") + " 그라운드룰";
+}
 
+export default function PartStep5({ session }: { session: Session }) {
+  const wallpaperRef = useRef<HTMLDivElement>(null);
   const rules = session.final_rules;
+  const subtitle = getValueSubtitle(session.core_value_ids ?? []);
 
   async function handleSave() {
     const target = wallpaperRef.current;
@@ -51,22 +60,19 @@ export default function PartStep5({ session }: { session: Session }) {
 
       <div className="w-full max-w-sm">
         {/* 화면용 결과 카드 */}
-        <div
-          ref={cardRef}
-          className="bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-3xl p-6 mb-5 text-white"
-        >
+        <div className="bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-3xl p-6 mb-5 text-white">
           <div className="flex items-center gap-2 mb-4">
             <Crown className="w-5 h-5 text-yellow-300" />
             <div>
               <p className="text-xs text-emerald-300 font-medium">MK Summer Camp 2026</p>
-              <p className="font-bold">{session.team_name} 숲 그라운드룰</p>
+              <p className="font-bold">{session.team_name} 숲 {subtitle}</p>
             </div>
           </div>
 
           <div className="space-y-2.5">
             {rules.map((rule, i) => (
-              <div key={rule.id} className="flex items-start gap-3 bg-white/10 rounded-xl px-4 py-3">
-                <span className="text-xs font-bold text-yellow-300 mt-0.5 w-4 flex-shrink-0">
+              <div key={rule.id} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
+                <span className="text-xs font-bold text-yellow-300 w-4 flex-shrink-0">
                   {i + 1}
                 </span>
                 <p className="text-sm leading-relaxed">{rule.text}</p>
@@ -108,12 +114,12 @@ export default function PartStep5({ session }: { session: Session }) {
           MK Summer Camp 2026
         </p>
         <p className="text-2xl font-bold text-white mb-1">{session.team_name} 숲</p>
-        <p className="text-sm text-emerald-200 mb-8">그라운드룰</p>
+        <p className="text-sm text-emerald-200 mb-8">{subtitle}</p>
 
         <div className="w-full space-y-3">
           {rules.map((rule, i) => (
-            <div key={rule.id} className="flex items-start gap-3 bg-white/10 rounded-2xl px-5 py-4">
-              <span className="text-sm font-bold text-yellow-300 mt-0.5 w-5 flex-shrink-0">
+            <div key={rule.id} className="flex items-center gap-3 bg-white/10 rounded-2xl px-5 py-4">
+              <span className="text-sm font-bold text-yellow-300 w-5 flex-shrink-0">
                 {i + 1}
               </span>
               <p className="text-sm text-white leading-relaxed">{rule.text}</p>

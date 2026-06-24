@@ -3,8 +3,14 @@ import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useRuleCandidates } from "@/lib/hooks/useGroups";
 import { submitRuleVotes } from "@/lib/hooks/useRuleVotes";
-import { MAX_RULE_VOTES } from "@/lib/constants";
+import { MAX_RULE_VOTES, PRESET_VALUES } from "@/lib/constants";
 import type { Session } from "@/lib/constants";
+
+function getValueLabel(valueId: string | null): string | null {
+  if (!valueId) return null;
+  if (valueId.startsWith("custom:")) return valueId.slice(7);
+  return PRESET_VALUES.find((v) => v.id === valueId)?.label ?? null;
+}
 
 export default function PartStep4({ session, participantId }: { session: Session; participantId: string }) {
   const candidates = useRuleCandidates(session.id);
@@ -93,7 +99,14 @@ export default function PartStep4({ session, participantId }: { session: Session
                           <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${isSelected ? "bg-emerald-500 border-emerald-500" : "border-stone-300"}`}>
                             {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                           </div>
-                          <p className="text-sm text-stone-800 leading-relaxed">{c.text}</p>
+                          <div className="flex-1 min-w-0">
+                            {getValueLabel(c.value_id) && (
+                              <span className="inline-block text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5 mb-1">
+                                {getValueLabel(c.value_id)}
+                              </span>
+                            )}
+                            <p className="text-sm text-stone-800 leading-relaxed">{c.text}</p>
+                          </div>
                         </div>
                       </button>
                     );
