@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Session, Participant, RuleCandidate } from "@/lib/constants";
 
@@ -32,6 +32,7 @@ export function useAllSessions() {
 
 export function useAllParticipants() {
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetch = useCallback(async () => {
     const supabase = createClient();
@@ -42,15 +43,24 @@ export function useAllParticipants() {
     if (data) setParticipants(data as Participant[]);
   }, []);
 
+  // 180명 동시 이벤트 방어: 400ms 안의 burst는 1번만 재조회
+  const debouncedFetch = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(fetch, 400);
+  }, [fetch]);
+
   useEffect(() => {
     fetch();
     const supabase = createClient();
     const channel = supabase
       .channel("admin-participants-all")
-      .on("postgres_changes", { event: "*", schema: "public", table: "participants" }, fetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "participants" }, debouncedFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [fetch]);
+    return () => {
+      supabase.removeChannel(channel);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [fetch, debouncedFetch]);
 
   return participants;
 }
@@ -90,6 +100,7 @@ export async function adminRenameSession(sessionId: string, teamName: string): P
 
 export function useAllRuleCandidates() {
   const [candidates, setCandidates] = useState<RuleCandidate[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetch = useCallback(async () => {
     const supabase = createClient();
@@ -100,15 +111,23 @@ export function useAllRuleCandidates() {
     if (data) setCandidates(data as RuleCandidate[]);
   }, []);
 
+  const debouncedFetch = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(fetch, 400);
+  }, [fetch]);
+
   useEffect(() => {
     fetch();
     const supabase = createClient();
     const channel = supabase
       .channel("admin-rule-candidates-all")
-      .on("postgres_changes", { event: "*", schema: "public", table: "rule_candidates" }, fetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "rule_candidates" }, debouncedFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [fetch]);
+    return () => {
+      supabase.removeChannel(channel);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [fetch, debouncedFetch]);
 
   return candidates;
 }

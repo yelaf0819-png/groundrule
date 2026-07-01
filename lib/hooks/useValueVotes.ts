@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { PRESET_VALUES } from "@/lib/constants";
 import type { ValueSuggestion } from "@/lib/constants";
@@ -13,6 +13,7 @@ export interface ValueVoteCount {
 export function useValueVoteCounts(sessionId: string | null) {
   const [counts, setCounts] = useState<ValueVoteCount[]>([]);
   const [respondents, setRespondents] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetch = useCallback(async () => {
     if (!sessionId) return;
@@ -32,22 +33,32 @@ export function useValueVoteCounts(sessionId: string | null) {
     setRespondents(new Set(data.map((d) => d.participant_id)).size);
   }, [sessionId]);
 
+  // 180명 동시 투표 방어: 300ms 안의 burst는 1번만 재조회
+  const debouncedFetch = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(fetch, 300);
+  }, [fetch]);
+
   useEffect(() => {
     if (!sessionId) return;
     fetch();
     const supabase = createClient();
     const ch = supabase
       .channel(`value-votes-${sessionId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "value_votes", filter: `session_id=eq.${sessionId}` }, fetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "value_votes", filter: `session_id=eq.${sessionId}` }, debouncedFetch)
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [sessionId, fetch]);
+    return () => {
+      supabase.removeChannel(ch);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [sessionId, fetch, debouncedFetch]);
 
   return { counts, respondents };
 }
 
 export function useValueSuggestions(sessionId: string | null) {
   const [suggestions, setSuggestions] = useState<ValueSuggestion[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetch = useCallback(async () => {
     if (!sessionId) return;
@@ -60,16 +71,24 @@ export function useValueSuggestions(sessionId: string | null) {
     if (data) setSuggestions(data as ValueSuggestion[]);
   }, [sessionId]);
 
+  const debouncedFetch = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(fetch, 300);
+  }, [fetch]);
+
   useEffect(() => {
     if (!sessionId) return;
     fetch();
     const supabase = createClient();
     const ch = supabase
       .channel(`value-sug-${sessionId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "value_suggestions", filter: `session_id=eq.${sessionId}` }, fetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "value_suggestions", filter: `session_id=eq.${sessionId}` }, debouncedFetch)
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [sessionId, fetch]);
+    return () => {
+      supabase.removeChannel(ch);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [sessionId, fetch, debouncedFetch]);
 
   return suggestions;
 }
