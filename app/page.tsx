@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Users, Shield } from "lucide-react";
 import FacilitatorReJoin from "@/components/FacilitatorReJoin";
+import FacilitatorCodeEntry from "@/components/FacilitatorCodeEntry";
 
 export default function LandingPage() {
   return (
@@ -60,8 +61,13 @@ export default function LandingPage() {
 
       <FacilitatorReJoin />
 
+      {/* 숲장 코드 재입장 */}
+      <div className="mt-4">
+        <FacilitatorCodeEntry />
+      </div>
+
       {/* 어드민 링크 */}
-      <div className="mt-12">
+      <div className="mt-8">
         <Link
           href="/admin"
           className="text-xs text-stone-400 hover:text-stone-600 underline underline-offset-2"
